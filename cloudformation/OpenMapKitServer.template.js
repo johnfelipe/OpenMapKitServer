@@ -96,7 +96,8 @@ const Resources = {
           '&& chown -R omkserver:omkserver /app/data ',
           'su - omkserver',
           'export NODE_ENV=production',
-          'node server.js &'
+          'node server.js &',
+          'yarn get_from_s3'
         ]),
         KeyName: 'mbtiles'
       }
