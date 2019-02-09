@@ -59,7 +59,7 @@ const Resources = {
       Properties: {
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
         ImageId: 'ami-0e4372c1860d7426c',
-        InstanceType: 'm3.large',
+        InstanceType: 't2.medium',
         LaunchConfigurationName: cf.stackName,
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
