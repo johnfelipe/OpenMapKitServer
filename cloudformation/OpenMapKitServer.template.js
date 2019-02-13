@@ -176,4 +176,4 @@ const Resources = {
  }
 };
 
-module.exports = { Parameters, Resources, Conditions }
+module.exports = { Parameters, Resources }
