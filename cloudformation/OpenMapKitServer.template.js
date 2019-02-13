@@ -63,7 +63,7 @@ const Resources = {
     }
   },
   OpenMapKitServerScaleUp: {
-      Type: "AWS::AutoScaling::ScalingPolicy",
+      Type: 'AWS::AutoScaling::ScalingPolicy',
       Properties: {
         AutoScalingGroupName: cf.ref('OpenMapKitServerASG'),
         PolicyType: 'TargetTrackingScaling',
