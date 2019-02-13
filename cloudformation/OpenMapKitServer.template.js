@@ -193,7 +193,7 @@ const Resources = {
       HealthCheck: {
         HealthyThreshold: 5,
         Interval: 10,
-        Target: 'HTTP:3210/',
+        Target: 'TCP:3210',
         Timeout: 9,
         UnhealthyThreshold: 3
       },
