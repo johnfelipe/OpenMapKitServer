@@ -109,8 +109,8 @@ const Resources = {
           'rm frontend/build/* -R',
           cf.sub('tar -xvzf /tmp/${OpenMapKitVersion}-frontend.tar.gz -C frontend/build/ --strip 1'),
           'git submodule update --init',
-          'node server.js &',
-          'yarn get_from_s3'
+          'yarn get_from_s3',
+          'node server.js &'
         ]),
         KeyName: 'mbtiles'
       }
