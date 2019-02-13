@@ -1,10 +1,6 @@
 const cf = require('@mapbox/cloudfriend');
 
 const Parameters = {
-  GitSha: {
-    Type: 'String',
-    Description: 'GitSha for this stack'
-  },
   ELBSecurityGroup: {
     Description: 'Security Group for the ELB',
     Type: 'String'
