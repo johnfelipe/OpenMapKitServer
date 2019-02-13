@@ -43,6 +43,10 @@ const Parameters = {
     Description: 'NODE_ENV environment variable',
     Type: 'String'
   },
+  SSLCertificateIdentifier: {
+    Type: 'String',
+    Description: 'SSL certificate for HTTPS protocol'
+  },
   UsersS3Bucket: {
    Description: 'Bucket with login details. Logins are stored at S3://<UsersS3Bucket>/<OMK_stack_name>/users.json',
    Type: 'String'
@@ -195,6 +199,13 @@ const Resources = {
         InstanceProtocol: 'HTTP',
         LoadBalancerPort: 80,
         Protocol: 'HTTP'
+      },
+      {
+        InstancePort: 3210,
+        InstanceProtocol: 'HTTP',
+        LoadBalancerPort: 443,
+        Protocol: 'HTTPS',
+        SSLCertificateId: cf.arn('acm', cf.ref('SSLCertificateIdentifier'))
       }],
       LoadBalancerName: cf.stackName,
       Scheme: 'internet-facing',
