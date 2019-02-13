@@ -16,6 +16,32 @@ const Parameters = {
   S3Bucket: {
     Description: 'S3 bucket',
     Type: 'String'
+  },
+  OpenMapKitVersion: {
+    Description: 'OpenMapKit Version, to download and extract the frontend',
+    Type: 'String'
+  },
+  EnableS3Sync: {
+    AllowedValues: [
+       'true',
+       'false'
+    ],
+    Default: 'true',
+    Description: 'Enable S3 sync',
+    Type: 'String'
+  },
+  NodeEnvironment: {
+    AllowedValues: [
+       'production',
+       'staging'
+    ],
+    Default: 'staging',
+    Description: 'NODE_ENV environment variable',
+    Type: 'String'
+  },
+  UsersS3Bucket: {
+   Description: 'Bucket with login details. Logins are stored at S3://<UsersS3Bucket>/<OMK_stack_name>/users.json',
+   Type: 'String'
   }
 };
 
