@@ -119,24 +119,25 @@ const Resources = {
     Type: 'AWS::IAM::Role',
     Properties: {
       AssumeRolePolicyDocument: {
-        Version: "2012-10-17",
+        Version: '2012-10-17',
         Statement: [{
-          Effect: "Allow",
+          Effect: 'Allow',
           Principal: {
-             Service: [ "ec2.amazonaws.com" ]
+             Service: [ 'ec2.amazonaws.com' ]
           },
-          Action: [ "sts:AssumeRole" ]
+          Action: [ 'sts:AssumeRole' ]
         }]
       },
       Policies: [{
-        PolicyName: "S3Policy",
+        PolicyName: 'S3Policy',
         PolicyDocument: {
-          Version: "2012-10-17",
+          Version: '2012-10-17',
           Statement:[{
             Action: [ 's3:ListBucket'],
             Effect: 'Allow',
             Resource: [
-              cf.sub('arn:aws:s3:::${S3Bucket}')
+              cf.sub('arn:aws:s3:::${S3Bucket}'),
+              cf.sub('arn:aws:s3:::${UsersS3Bucket}')
             ]
           }, {
             Action: [
@@ -151,7 +152,17 @@ const Resources = {
             Resource: [
                 cf.sub('arn:aws:s3:::${S3Bucket}*')
             ]
-          }]
+          }, {
+           Action: [
+               's3:GetObject',
+               's3:GetObjectAcl',
+               's3:ListObjects'
+           ],
+           Effect: 'Allow',
+           Resource: [
+               cf.join('/', [cf.sub('arn:aws:s3:::${UsersS3Bucket}'), cf.stackName, 'users.json'])
+           ]
+         }]
         }
       }],
       RoleName: cf.join('-', [cf.stackName, 'ec2', 'role'])
