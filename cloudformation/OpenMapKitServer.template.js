@@ -17,6 +17,10 @@ const Parameters = {
     Description: 'S3 bucket',
     Type: 'String'
   },
+  S3Prefix: {
+    Description: 'S3 prefix for the bucket',
+    Type: 'String'
+  },
   OpenMapKitVersion: {
     Description: 'OpenMapKit Version, to download and extract the frontend',
     Type: 'String'
