@@ -169,7 +169,7 @@ const Resources = {
     }
   },
   OpenMapKitServerEC2InstanceProfile: {
-     Type: "AWS::IAM::InstanceProfile",
+     Type: 'AWS::IAM::InstanceProfile',
      Properties: {
         Roles: [cf.ref('OpenMapKitServerEC2Role')],
         InstanceProfileName: cf.join('-', [cf.stackName, 'ec2', 'instance', 'profile'])
