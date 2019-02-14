@@ -199,13 +199,7 @@ const Resources = {
       },
       Listeners: [{
         InstancePort: 3210,
-        InstanceProtocol: 'HTTP',
-        LoadBalancerPort: 80,
-        Protocol: 'HTTP'
-      },
-      {
-        InstancePort: 3210,
-        InstanceProtocol: 'HTTP',
+        InstanceProtocol: 'HTTPS',
         LoadBalancerPort: 443,
         Protocol: 'HTTPS',
         SSLCertificateId: cf.arn('acm', cf.ref('SSLCertificateIdentifier'))
