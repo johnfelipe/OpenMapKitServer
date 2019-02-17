@@ -88,8 +88,8 @@ const Resources = {
     Type: 'AWS::AutoScaling::LaunchConfiguration',
       Properties: {
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
-        ImageId: 'ami-08b8af1c94b41235d',
-        InstanceType: 't2.medium',
+        ImageId: 'ami-0e4372c1860d7426c',
+        InstanceType: 'm3.large',
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
           '#!/bin/bash',
