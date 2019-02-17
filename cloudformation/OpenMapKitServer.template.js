@@ -48,8 +48,12 @@ const Parameters = {
     Description: 'SSL certificate for HTTPS protocol'
   },
   UsersS3Bucket: {
-   Description: 'Bucket with login details. Logins are stored at S3://<UsersS3Bucket>/<OMK_stack_name>/users.json',
-   Type: 'String'
+    Description: 'Bucket with login details. Logins are stored at S3://<UsersS3Bucket>/<OMK_stack_name>/users.json',
+    Type: 'String'
+  },
+  VpcId: {
+    Description: 'Default VPC ID',
+    Type: 'String'
   }
 };
 
@@ -67,7 +71,8 @@ const Resources = {
       LaunchConfigurationName: cf.ref('OpenMapKitServerLaunchConfiguration'),
       LoadBalancerNames: [ cf.ref('OpenMapKitServerLoadBalancer') ],
       HealthCheckType: 'EC2',
-      AvailabilityZones: cf.getAzs(cf.region)
+      AvailabilityZones: cf.getAzs(cf.region),
+      TargetGroupARNs: [cf.ref('OpenMapKitServerTargetGroup')]
     }
   },
   OpenMapKitServerScaleUp: {
@@ -186,35 +191,49 @@ const Resources = {
      }
   },
   OpenMapKitServerLoadBalancer: {
-    Type: 'AWS::ElasticLoadBalancing::LoadBalancer',
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer',
     Properties: {
-      CrossZone: true,
-      HealthCheck: {
-        HealthyThreshold: 5,
-        Interval: 10,
-        Target: 'TCP:3210',
-        Timeout: 9,
-        UnhealthyThreshold: 3
-      },
-      Listeners: [{
-        InstancePort: 3210,
-        InstanceProtocol: 'HTTP',
-        LoadBalancerPort: 80,
-        Protocol: 'HTTP'
-      },
-      {
-        InstancePort: 3210,
-        InstanceProtocol: 'HTTP',
-        LoadBalancerPort: 443,
-        Protocol: 'HTTPS',
-        SSLCertificateId: cf.arn('acm', cf.ref('SSLCertificateIdentifier'))
-      }],
-      LoadBalancerName: cf.stackName,
-      Scheme: 'internet-facing',
+      Name: cf.stackName,
       SecurityGroups: [cf.ref('ELBSecurityGroup')],
-      Subnets: cf.split(',', cf.ref('ELBSubnets'))
-   }
- }
+      Subnets: cf.split(',', cf.ref('ELBSubnets')),
+      Type: 'application'
+    }
+  },
+  OpenMapKitServerTargetGroup: {
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup',
+    Properties: {
+      Port: 3210,
+      Protocol: 'HTTP',
+      VpcId: cf.ref('VpcId')
+    }
+  },
+  OpenMapKitServerLoadBalancerHTTPSListener: {
+    Type: 'AWS::ElasticLoadBalancingV2::Listener',
+    Properties: {
+      Certificates: [ {
+        CertificateArn: cf.arn('acm', cf.ref('SSLCertificateIdentifier'))
+      }],
+      DefaultActions: [{
+        Type: 'forward',
+        TargetGroupArn: cf.ref('OpenMapKitServerTargetGroup')
+      }],
+      LoadBalancerArn: cf.ref('OpenMapKitServerLoadBalancer'),
+      Port: 443,
+      Protocol: 'HTTPS'
+    }
+  },
+  OpenMapKitServerLoadBalancerHTTPListener: {
+    Type: 'AWS::ElasticLoadBalancingV2::Listener',
+    Properties: {
+      DefaultActions: [{
+        Type: 'forward',
+        TargetGroupArn: cf.ref('OpenMapKitServerTargetGroup')
+      }],
+      LoadBalancerArn: cf.ref('OpenMapKitServerLoadBalancer'),
+      Port: 80,
+      Protocol: 'HTTP'
+    }
+  }
 };
 
 module.exports = { Parameters, Resources }
