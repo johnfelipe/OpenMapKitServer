@@ -27,8 +27,8 @@ const Parameters = {
   },
   EnableS3Sync: {
     AllowedValues: [
-       'true',
-       'false'
+     'true',
+     'false'
     ],
     Default: 'true',
     Description: 'Enable S3 sync',
@@ -36,8 +36,8 @@ const Parameters = {
   },
   NodeEnvironment: {
     AllowedValues: [
-       'production',
-       'staging'
+     'production',
+     'staging'
     ],
     Default: 'staging',
     Description: 'NODE_ENV environment variable',
