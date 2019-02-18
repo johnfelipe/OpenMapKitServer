@@ -208,7 +208,7 @@ const Resources = {
       HealthyThresholdCount: 5,
       UnhealthyThresholdCount: 3,
       Port: 3210,
-      Protocol: 'HTTPS',
+      Protocol: 'HTTP',
       VpcId: cf.ref('VpcId'),
       Matcher: {
         HttpCode: '200,202,302,304'
@@ -228,6 +228,18 @@ const Resources = {
       LoadBalancerArn: cf.ref('OpenMapKitServerLoadBalancer'),
       Port: 443,
       Protocol: 'HTTPS'
+    }
+  },
+  OpenMapKitServerLoadBalancerHTTPListener: {
+    Type: 'AWS::ElasticLoadBalancingV2::Listener',
+    Properties: {
+      DefaultActions: [{
+        Type: 'forward',
+        TargetGroupArn: cf.ref('OpenMapKitServerTargetGroup')
+      }],
+      LoadBalancerArn: cf.ref('OpenMapKitServerLoadBalancer'),
+      Port: 80,
+      Protocol: 'HTTP'
     }
   }
 };
