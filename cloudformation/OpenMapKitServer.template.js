@@ -201,9 +201,18 @@ const Resources = {
   OpenMapKitServerTargetGroup: {
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup',
     Properties: {
+      HealthCheckIntervalSeconds: 30,
+      HealthCheckPort: 3210,
+      HealthCheckProtocol: 'HTTP',
+      HealthCheckTimeoutSeconds: 10,
+      HealthyThresholdCount: 5,
+      UnhealthyThresholdCount: 3,
       Port: 3210,
-      Protocol: 'HTTP',
-      VpcId: cf.ref('VpcId')
+      Protocol: 'HTTPS',
+      VpcId: cf.ref('VpcId'),
+      Matcher: {
+        HttpCode: '200,202,302,304'
+      }
     }
   },
   OpenMapKitServerLoadBalancerHTTPSListener: {
