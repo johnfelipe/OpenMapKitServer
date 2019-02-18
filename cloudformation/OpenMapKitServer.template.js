@@ -90,7 +90,6 @@ const Resources = {
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
         ImageId: 'ami-08b8af1c94b41235d',
         InstanceType: 't2.medium',
-        LaunchConfigurationName: cf.stackName,
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
           '#!/bin/bash',
