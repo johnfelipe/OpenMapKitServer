@@ -229,18 +229,6 @@ const Resources = {
       Port: 443,
       Protocol: 'HTTPS'
     }
-  },
-  OpenMapKitServerLoadBalancerHTTPListener: {
-    Type: 'AWS::ElasticLoadBalancingV2::Listener',
-    Properties: {
-      DefaultActions: [{
-        Type: 'forward',
-        TargetGroupArn: cf.ref('OpenMapKitServerTargetGroup')
-      }],
-      LoadBalancerArn: cf.ref('OpenMapKitServerLoadBalancer'),
-      Port: 80,
-      Protocol: 'HTTP'
-    }
   }
 };
 
