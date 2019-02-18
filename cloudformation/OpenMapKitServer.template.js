@@ -69,7 +69,6 @@ const Resources = {
       MaxSize: 1,
       HealthCheckGracePeriod: 300,
       LaunchConfigurationName: cf.ref('OpenMapKitServerLaunchConfiguration'),
-      LoadBalancerNames: [ cf.ref('OpenMapKitServerLoadBalancer') ],
       HealthCheckType: 'EC2',
       AvailabilityZones: cf.getAzs(cf.region),
       TargetGroupARNs: [cf.ref('OpenMapKitServerTargetGroup')]
