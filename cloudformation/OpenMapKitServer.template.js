@@ -48,12 +48,23 @@ const Parameters = {
     Description: 'SSL certificate for HTTPS protocol'
   },
   UsersS3Bucket: {
-    Description: 'Bucket with login details. Logins are stored at S3://<UsersS3Bucket>/<OMK_stack_name>/users.json',
+    Description: 'Bucket with login details. Logins are stored at S3://<UsersS3Bucket>/settings/<OMK_stack_name>/users.json',
     Type: 'String'
   },
   VpcId: {
     Description: 'Default VPC ID',
     Type: 'String'
+  },
+  InstanceType: {
+    Description: 'EC2 Instance Type',
+    Type: 'String',
+    AllowedValues: [
+      'm3.medium',
+      'c3.large',
+      'm3.large',
+      'r3.large',
+      'c5d.large'
+    ]
   }
 };
 
@@ -80,7 +91,7 @@ const Resources = {
         AutoScalingGroupName: cf.ref('OpenMapKitServerASG'),
         PolicyType: 'TargetTrackingScaling',
         TargetTrackingConfiguration: {
-          TargetValue: 85,
+          TargetValue: 80,
           PredefinedMetricSpecification: {
             PredefinedMetricType: 'ASGAverageCPUUtilization'
           }
@@ -93,7 +104,7 @@ const Resources = {
       Properties: {
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
         ImageId: 'ami-0e4372c1860d7426c',
-        InstanceType: 'm3.medium',
+        InstanceType: cf.ref('InstanceType'),
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
           '#!/bin/bash',
@@ -120,7 +131,7 @@ const Resources = {
           'export HOME="/root"',
           'cd /app && git clone https://github.com/hotosm/OpenMapKitServer.git .',
           'pip install -r requirements.txt',
-          cf.sub('aws s3 cp s3://${UsersS3Bucket}/${AWS::StackName}/users.json /app/util/users.json'),
+          cf.sub('aws s3 cp s3://${UsersS3Bucket}/settings/${AWS::StackName}/users.json /app/util/users.json'),
           'yarn && rm -rf /root/.cache/yarn',
           cf.sub('wget https://github.com/hotosm/OpenMapKitServer/archive/${OpenMapKitVersion}-frontend.tar.gz -P /tmp/'),
           'rm frontend/build/* -R',
@@ -177,7 +188,7 @@ const Resources = {
            ],
            Effect: 'Allow',
            Resource: [
-               cf.join('/', [cf.sub('arn:aws:s3:::${UsersS3Bucket}'), cf.stackName, 'users.json'])
+               cf.join('/', [cf.sub('arn:aws:s3:::${UsersS3Bucket}/settings'), cf.stackName, 'users.json'])
            ]
          }]
         }
