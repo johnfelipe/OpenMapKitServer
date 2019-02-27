@@ -66,7 +66,7 @@ const Resources = {
       Cooldown: 300,
       MinSize: 0,
       DesiredCapacity: 1,
-      MaxSize: 1,
+      MaxSize: 5,
       HealthCheckGracePeriod: 300,
       LaunchConfigurationName: cf.ref('OpenMapKitServerLaunchConfiguration'),
       HealthCheckType: 'EC2',
@@ -93,10 +93,13 @@ const Resources = {
       Properties: {
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
         ImageId: 'ami-0e4372c1860d7426c',
-        InstanceType: 'm3.large',
+        InstanceType: 'm3.medium',
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
           '#!/bin/bash',
+          'export LC_ALL="en_US.UTF-8"',
+          'export LC_CTYPE="en_US.UTF-8"',
+          'dpkg-reconfigure --frontend=noninteractive locales',
           'apt update -y &&',
           'apt upgrade -y &&',
           'apt install -y --no-install-recommends apt-transport-https curl software-properties-common &&',
