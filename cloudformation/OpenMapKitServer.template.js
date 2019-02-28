@@ -54,17 +54,6 @@ const Parameters = {
   VpcId: {
     Description: 'Default VPC ID',
     Type: 'String'
-  },
-  InstanceType: {
-    Description: 'EC2 Instance Type',
-    Type: 'String',
-    AllowedValues: [
-      'm3.medium',
-      'c3.large',
-      'm3.large',
-      'r3.large',
-      'c5d.large'
-    ]
   }
 };
 
@@ -103,8 +92,8 @@ const Resources = {
     Type: 'AWS::AutoScaling::LaunchConfiguration',
       Properties: {
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
-        ImageId: 'ami-0e4372c1860d7426c',
-        InstanceType: cf.ref('InstanceType'),
+        ImageId: 'ami-02794be3fb6de50e1',
+        InstanceType: 't2.small',
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
           '#!/bin/bash',
