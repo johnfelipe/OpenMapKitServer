@@ -120,7 +120,7 @@ const Resources = {
           'export HOME="/root"',
           'cd /app && git clone https://github.com/hotosm/OpenMapKitServer.git .',
           'pip install -r requirements.txt',
-          cf.sub('aws s3 cp s3://${UsersS3Bucket}/settings/${AWS::StackName}/users.json /app/util/users.json'),
+          cf.sub('aws s3 cp s3://${UsersS3Bucket}/settings/OpenMapKitServer-${S3Prefix}/users.json /app/util/users.json'),
           'yarn && rm -rf /root/.cache/yarn',
           cf.sub('wget https://github.com/hotosm/OpenMapKitServer/archive/${OpenMapKitVersion}-frontend.tar.gz -P /tmp/'),
           'rm frontend/build/* -R',
