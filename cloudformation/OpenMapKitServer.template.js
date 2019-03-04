@@ -91,12 +91,26 @@ const Resources = {
   OpenMapKitServerLaunchConfiguration: {
     Type: 'AWS::AutoScaling::LaunchConfiguration',
       Properties: {
+        BlockDeviceMappings: [{
+           DeviceName: '/dev/xvdcz',
+           Ebs: {
+             VolumeType: 'io1',
+             Iops: 300,
+             DeleteOnTermination: true,
+             VolumeSize: 12
+           }
+         }
+       ],
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
-        ImageId: 'ami-0565af6e282977273',
+        ImageId: 'ami-0a313d6098716f372',
         InstanceType: 't2.small',
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
           '#!/bin/bash',
+          'while [ ! -e /dev/xvdcz ]; do echo waiting for /dev/xvdcz to attach; sleep 10; done',
+          'sudo mkdir -p /app',
+          'sudo mkfs -t ext3 /dev/xvdcz',
+          'sudo mount /dev/xvdcz /app',
           'export LC_ALL="en_US.UTF-8"',
           'export LC_CTYPE="en_US.UTF-8"',
           'dpkg-reconfigure --frontend=noninteractive locales',
@@ -112,7 +126,6 @@ const Resources = {
           'apt-get clean',
           'rm -rf /var/lib/apt/lists/*',
           'npm install -g yarn',
-          'mkdir -p /app',
           cf.sub('export AWSBUCKETNAME=${S3Bucket}'),
           cf.sub('export AWSBUCKETPREFIX=${S3Prefix}'),
           cf.sub('export ENABLES3SYNC=${EnableS3Sync}'),
