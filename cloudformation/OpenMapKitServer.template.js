@@ -1,6 +1,10 @@
 const cf = require('@mapbox/cloudfriend');
 
 const Parameters = {
+  GitSha: {
+    Description: 'Repository GitSha',
+    Type: 'String'
+  },
   ELBSecurityGroup: {
     Description: 'Security Group for the ELB',
     Type: 'String'
@@ -91,38 +95,27 @@ const Resources = {
   OpenMapKitServerLaunchConfiguration: {
     Type: 'AWS::AutoScaling::LaunchConfiguration',
       Properties: {
-        BlockDeviceMappings: [{
-           DeviceName: '/dev/xvdcz',
-           Ebs: {
-             VolumeType: 'io1',
-             Iops: 300,
-             DeleteOnTermination: true,
-             VolumeSize: 12
-           }
-         }
-       ],
         IamInstanceProfile: cf.ref('OpenMapKitServerEC2InstanceProfile'),
-        ImageId: 'ami-0a313d6098716f372',
-        InstanceType: 't2.small',
+        ImageId: 'ami-0213e2640a5b2f74c',
+        InstanceType: 'm3.medium',
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
-          '#!/bin/bash',
-          'while [ ! -e /dev/xvdcz ]; do echo waiting for /dev/xvdcz to attach; sleep 10; done',
+          'set -x',
+          'export DEBIAN_FRONTEND=noninteractive',
           'sudo mkdir -p /app',
-          'sudo mkfs -t ext3 /dev/xvdcz',
-          'sudo mount /dev/xvdcz /app',
           'export LC_ALL="en_US.UTF-8"',
           'export LC_CTYPE="en_US.UTF-8"',
           'dpkg-reconfigure --frontend=noninteractive locales',
-          'apt update -y &&',
-          'apt upgrade -y &&',
+          'DEBIAN_FRONTEND=noninteractive apt update &&',
+          'DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confold" upgrade -q -y --force-yes &&',
+          'DEBIAN_FRONTEND=noninteractive apt -o Dpkg::Options::="--force-confold" dist-upgrade -q -y --force-yes',
           'apt install -y --no-install-recommends apt-transport-https curl software-properties-common &&',
           'curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash',
           'export NVM_DIR="$HOME/.nvm"',
           '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"',
           '[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"',
           'nvm install v6',
-          'apt install -y --no-install-recommends build-essential default-jre-headless git nodejs python python-dev python-pip python-setuptools python-wheel',
+          'apt install -y --no-install-recommends build-essential default-jre-headless git nodejs python python-dev python-pip python-setuptools python-wheel s3cmd',
           'apt-get clean',
           'rm -rf /var/lib/apt/lists/*',
           'npm install -g yarn',
@@ -132,6 +125,7 @@ const Resources = {
           cf.sub('export NODE_ENV=${NodeEnvironment}'),
           'export HOME="/root"',
           'cd /app && git clone https://github.com/hotosm/OpenMapKitServer.git .',
+          cf.sub('git reset --hard ${GitSha}'),
           'pip install -r requirements.txt',
           cf.sub('aws s3 cp s3://${UsersS3Bucket}/settings/OpenMapKitServer-${S3Prefix}/users.json /app/util/users.json'),
           'yarn && rm -rf /root/.cache/yarn',
@@ -217,11 +211,11 @@ const Resources = {
   OpenMapKitServerTargetGroup: {
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup',
     Properties: {
-      HealthCheckIntervalSeconds: 30,
+      HealthCheckIntervalSeconds: 60,
       HealthCheckPort: 3210,
       HealthCheckProtocol: 'HTTP',
       HealthCheckTimeoutSeconds: 10,
-      HealthyThresholdCount: 5,
+      HealthyThresholdCount: 3,
       UnhealthyThresholdCount: 3,
       Port: 3210,
       Protocol: 'HTTP',
