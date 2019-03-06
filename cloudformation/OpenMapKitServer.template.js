@@ -100,6 +100,7 @@ const Resources = {
         InstanceType: 'm3.medium',
         SecurityGroups: [cf.ref('EC2SecurityGroup')],
         UserData: cf.userData([
+          '#!/bin/bash',
           'set -x',
           'export DEBIAN_FRONTEND=noninteractive',
           'sudo mkdir -p /app',
@@ -114,7 +115,7 @@ const Resources = {
           'export NVM_DIR="$HOME/.nvm"',
           '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"',
           '[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"',
-          'nvm install v6',
+          'nvm install v8',
           'apt install -y --no-install-recommends build-essential default-jre-headless git nodejs python python-dev python-pip python-setuptools python-wheel s3cmd',
           'apt-get clean',
           'rm -rf /var/lib/apt/lists/*',
