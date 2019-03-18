@@ -19,7 +19,6 @@ module.exports = function (req, res, next) {
       console.warn(err.stack);
       return res.status(err.status).json(err);
     }
-
     return res.status(200).json(aggregate);
   });
 };
